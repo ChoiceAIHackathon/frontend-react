@@ -35,11 +35,9 @@ const drawerWidth = 240;
 const navItems = {
   "/": "Home",
   "/questions": "Questions",
-  "/quiz": "Quiz",
+  // "/quiz": "Quiz",
   "/contact": "Contact",
   "/profile": "Profile",
-  "/admin/dashboard": "Dashboard",
-  "/auth": "Users",
 };
 
 function DrawerAppBar(props) {
