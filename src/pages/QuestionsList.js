@@ -13,6 +13,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
 function Questions() {
+  const [showSummary, setShowSummary] = useState(false);
+
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [totalPages, setTotalPages] = useState(1);
@@ -306,7 +308,7 @@ function Questions() {
                       variant="contained"
                       color="secondary"
                       fullWidth
-                      // onClick={() => handleCommentSubmit(1)}
+                      onClick={() => setShowSummary(!showSummary)}
                     >
                       AI Summary
                     </Button>
@@ -316,6 +318,93 @@ function Questions() {
             </Card>
           </Grid>
         )}
+        <Grid item xs={12}>
+          <Typography variant="h6" textAlign="center" gutterBottom>
+            Pros and Cons
+          </Typography>
+          {showSummary && (
+            <Grid container spacing={2}>
+              {questions.map((question, index) => (
+                <React.Fragment key={question._id}>
+                  <Grid item xs={6}>
+                    <Typography
+                      variant="subtitle1"
+                      style={{ fontWeight: "700" }}
+                    >
+                      {question.option1.text}
+                    </Typography>
+                    {question.option1.pros.map((pro, index) => (
+                      <Typography
+                        key={index}
+                        style={{
+                          border: "1px solid #2ECC71",
+                          borderRadius: "4px",
+                          padding: "4px",
+                          marginBottom: "4px",
+                          backgroundColor: "#e8f3db",
+                        }}
+                      >
+                        {pro}
+                      </Typography>
+                    ))}
+                    {question.option1.cons.map((con, index) => (
+                      <Typography
+                        key={index}
+                        style={{
+                          border: "1px solid #E74C3C",
+                          borderRadius: "4px",
+                          padding: "4px",
+                          marginBottom: "4px",
+                          backgroundColor: "#ffdadb",
+                        }}
+                      >
+                        {con}
+                      </Typography>
+                    ))}
+                  </Grid>
+                  <Grid item xs={6}>
+                    <Typography
+                      variant="subtitle1"
+                      style={{ fontWeight: "700" }}
+                    >
+                      {question.option2.text}
+                    </Typography>
+                    {question.option2.pros.map((pro, index) => (
+                      <Typography
+                        key={index}
+                        style={{
+                          border: "1px solid #2ECC71",
+                          borderRadius: "4px",
+                          padding: "4px",
+                          marginBottom: "4px",
+                          backgroundColor: "#e8f3db",
+                        }}
+                      >
+                        {pro}
+                      </Typography>
+                    ))}
+                    {question.option2.cons.map((con, index) => (
+                      <Typography
+                        key={index}
+                        style={{
+                          border: "1px solid #E74C3C",
+                          borderRadius: "4px",
+                          padding: "4px",
+                          marginBottom: "4px",
+                          backgroundColor: "#ffdadb",
+                        }}
+                      >
+                        {con}
+                      </Typography>
+                    ))}
+                  </Grid>
+                </React.Fragment>
+              ))}
+            </Grid>
+          )}
+        </Grid>
+
+        {/* add pros cons here */}
       </Grid>
     </Container>
   );
