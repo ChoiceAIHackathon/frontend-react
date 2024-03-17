@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import OpenAI from "openai-api";
 import {
   Container,
   Grid,
@@ -12,7 +13,67 @@ import {
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 
+function BetsResult() {
+  const [prosAndCons, setProsAndCons] = useState({
+    option1: { pros: [], cons: [] },
+    option2: { pros: [], cons: [] },
+  });
+  const [bestOption, setBestOption] = useState("");
+  const openai = new OpenAI("YOUR_OPENAI_API_KEY");
+
+  const handleGetBestOption = async () => {
+    try {
+      const prosConsString = getProsConsString(prosAndCons);
+      const response = await openai.complete({
+        engine: "text-davinci-003",
+        prompt: prosConsString,
+        maxTokens: 1,
+      });
+      const bestOption = response.data.choices[0].text;
+      setBestOption(bestOption);
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  const getProsConsString = (prosAndCons) => {
+    const { option1, option2 } = prosAndCons;
+    const option1Pros = option1.pros.join("\n");
+    const option1Cons = option1.cons.join("\n");
+    const option2Pros = option2.pros.join("\n");
+    const option2Cons = option2.cons.join("\n");
+
+    return `
+      Pros and cons analysis:
+
+      Option 1 Pros:
+      ${option1Pros}
+
+      Option 1 Cons:
+      ${option1Cons}
+
+      Option 2 Pros:
+      ${option2Pros}
+
+      Option 2 Cons:
+      ${option2Cons}
+
+      Which option is the best choice?
+    `;
+  };
+
+  return (
+    <div>
+      {/* Your UI for collecting pros and cons */}
+      <button onClick={handleGetBestOption}>Get Best Option</button>
+      {bestOption && <p>Best Option: {bestOption}</p>}
+    </div>
+  );
+}
+
 function Questions() {
+  const [bestOption, setBestOption] = useState("");
+  const openai = new OpenAI("YOUR_OPENAI_API_KEY");
   const [showSummary, setShowSummary] = useState(false);
 
   const [questions, setQuestions] = useState([]);
@@ -24,7 +85,7 @@ function Questions() {
     { pros: [], cons: [] },
     { pros: [], cons: [] },
   ]);
-
+  const [showOption, setShowOption] = useState(""); // State variable to track the displayed option text
   useEffect(() => {
     fetchQuestions();
   }, [currentQuestionIndex]);
@@ -136,6 +197,14 @@ function Questions() {
       });
   };
 
+  const handleShowOption = () => {
+    // Randomly select an option index (0 or 1)
+    const randomOptionIndex = Math.floor(Math.random() * 2);
+    // Update the state to display the text of the randomly selected option
+    setShowOption(
+      questions[currentQuestionIndex][`option${randomOptionIndex + 1}`].text
+    );
+  };
   return (
     <Container maxWidth="md" style={{ marginTop: "50px" }}>
       <Grid container spacing={2}>
@@ -402,9 +471,32 @@ function Questions() {
               ))}
             </Grid>
           )}
+          {showSummary && (
+            <Grid item xs={12} sx={{ textAlign: "center" }}>
+              <Button onClick={handleShowOption}>Show Best Option</Button>
+            </Grid>
+          )}
         </Grid>
+        {showOption && (
+          <Grid
+            item
+            xs={12}
+            sx={{
+              textAlign: "center",
+              backgroundColor: "#4CAF50",
+              padding: "20px",
+              borderRadius: "10px",
+              boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+            }}
+          >
+            <Typography variant="h5" sx={{ color: "#fff" }}>
+              {showOption}
+            </Typography>
+          </Grid>
+        )}
 
         {/* add pros cons here */}
+        {/* <BetsResult /> */}
       </Grid>
     </Container>
   );
